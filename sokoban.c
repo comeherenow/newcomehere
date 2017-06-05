@@ -7,7 +7,7 @@ void start();
 void move();
 int getch();
 void stage();
-void print_stage();
+void print_stage(int);
 void whereisplayer();
 int nstage_check();
 char name[10];
@@ -27,18 +27,24 @@ int main(){
   if (box_num[stage_num][0]!=house_num[stage_num][0]){
   printf("맵 오류 : 박스 개수와 보관장소 개수 불일치\n프로그램을 종료합니다.");
   return 0;}
-  print_stage();
-  whereisplayer();
-  while(1)
-  {
 
-    input_char=getch();
 
-    if(input_char == 'h', 'j', 'k', 'l')
-    move();
+  while(stage_num<6){
+    print_stage(stage_num=0);
+    whereisplayer();
+    while(1)
+    {
 
-    nstage_check();
+      input_char=getch();
+
+      if(input_char == 'h', 'j', 'k', 'l')
+      move();
+
+      nstage_check();
+    }
   }
+
+
   return 0;
 }
 
@@ -93,7 +99,7 @@ void stage(){
   fclose(fp);
 }
 
-void print_stage(){
+void print_stage(int stage_num){
 
   int i;
 
@@ -103,7 +109,7 @@ void print_stage(){
   i++;}
   printf("\n\n"); //HELLO NAME 출력
 
-  stage_num=0;
+
   for(int a=0;a<30;a++){
     for(int b=0;b<30;b++){
       printf("%c",map[stage_num][a][b]);
@@ -165,7 +171,7 @@ void move(){
   playery+=dy;
   playerx+=dx;
   system("clear");
-  print_stage();
+  print_stage(stage_num);
   }
 }
 
@@ -182,7 +188,12 @@ int nstage_check(){
     }
   }
   if (ok==house_num[stage_num][0]){
+    system("clear");
     printf("클리어");
+    stage_num++;
+    print_stage(stage_num);
+    //return 0;
+
     return 0;
   }
 
