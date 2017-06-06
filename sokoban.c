@@ -8,17 +8,36 @@ void move();
 int getch();
 void stage();
 void print_stage(int);
+void save_stage();
+void load_stage();
+void print_load();
 void whereisplayer();
 int nstage_check();
+
 char name[10];
+
 int stage_num = -1;
+int stage_num_save = -1;
+
 int house_num[5][1];
+int house_num_save[5][1];
+
 int box_num[5][1];
+int box_num_save[5][1];
+
 char map[5][30][30];
-char house[5][30][30];
-char box[5][30][30];
+char mapforsave[5][30][30];
+
+char house[5][30][30]; // 보관장소
+char houseforsave[5][30][30];
+
+char box[5][30][30]; // 상자
+char boxforsave[5][30][30];
+
 int playerx,playery;
 char input_char;
+
+
 //------------------------------------------------------------------------------
 int main(){
   start(); //시작 및 이름 입력
@@ -33,8 +52,36 @@ int main(){
     whereisplayer();
     while(1)
     {
-
       input_char=getch();
+
+      if(input_char == 'h', 'j', 'k', 'l')
+      {
+      move();
+      }
+
+      if (nstage_check()==0)
+      break;
+
+      if(input_char == 's')
+      {
+        save_stage();
+        printf("저장완료");
+        continue;
+      }
+
+      if(input_char == 'e')
+      {
+        save_stage();
+        return 0;
+      }
+
+      if(input_char == 'f')
+      {
+        system("clear");
+        load_stage();
+        print_load();
+        continue;
+      }
 
       if(input_char == 'h', 'j', 'k', 'l'){
       move();}
@@ -98,6 +145,8 @@ void stage(){
 
   fclose(fp);
 }
+
+
 //-------------PRINT_STAGE : 맵 출력하기 -----------------
 void print_stage(int stage_num){
   system("clear");
@@ -119,6 +168,7 @@ void print_stage(int stage_num){
 //  whereisplayer(); // @ 위치 찾기
 }
 
+//  whereisplayer(); // @ 위치 찾기
 void whereisplayer(){
   char ch;
   int a,b;
@@ -189,6 +239,7 @@ int nstage_check(){
       }
     }
   }
+
   if (ok==house_num[stage_num][0]){
     system("clear");
     printf("클리어 (짝짝짝) \n");
@@ -200,12 +251,65 @@ int nstage_check(){
 
   }
   return 1;
+
 }
 
+void save_stage(int stage_num_save)
+{
+  int a, b;
+  FILE *save;
 
+  save=fopen("sokoban.txt","w");
+  fprintf(save,"%c",map[stage_num][a][b]);
+  fclose(save);
+}
 
+void load_stage()
+{
+  int x = 0, y = 0;
+  char ch;
 
+  FILE *load;
 
+  load = fopen("sokoban.txt","r");
+  while(fscanf(load,"%c",&ch) != EOF)
+  {
+
+    if (ch=='\n')
+    {
+      y++;
+      x=0;
+      continue;
+    }
+
+    if(ch=='O')
+    {
+      house[stage_num][y][x]=ch;
+      house_num[stage_num][0]++;
+    }
+
+    if(ch=='$')
+    {
+      box[stage_num][y][x]=ch;
+      box_num[stage_num][0]++;
+    }
+
+    map[stage_num][y][x] = ch;
+    x++;
+  }
+
+  fclose(load);
+}
+
+void print_load(int stage_num)
+{
+  for(int a=0;a<30;a++){
+    for(int b=0;b<30;b++){
+      printf("%c",map[stage_num][b][a]);
+    }
+    printf("\n");
+  }
+}
 
 
 int getch(void){
