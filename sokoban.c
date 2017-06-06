@@ -37,6 +37,7 @@ char boxforsave[5][30][30];
 int playerx,playery;
 char input_char;
 
+
 //------------------------------------------------------------------------------
 int main(){
   start(); //시작 및 이름 입력
@@ -81,6 +82,12 @@ int main(){
         print_load();
         continue;
       }
+
+      if(input_char == 'h', 'j', 'k', 'l'){
+      move();}
+
+      if (nstage_check()==0)
+      break;
     }
 
   return 0;
@@ -139,6 +146,7 @@ void stage(){
   fclose(fp);
 }
 
+
 //-------------PRINT_STAGE : 맵 출력하기 -----------------
 void print_stage(int stage_num){
   system("clear");
@@ -157,6 +165,7 @@ void print_stage(int stage_num){
     }
     printf("\n");
   }
+//  whereisplayer(); // @ 위치 찾기
 }
 
 //  whereisplayer(); // @ 위치 찾기
@@ -242,6 +251,7 @@ int nstage_check(){
 
   }
   return 1;
+
 }
 
 void save_stage(int stage_num_save)
