@@ -19,17 +19,16 @@ char house[5][30][30];
 char box[5][30][30];
 int playerx,playery;
 char input_char;
-
+//------------------------------------------------------------------------------
 int main(){
-  start();
+  start(); //시작 및 이름 입력
   sleep(1);
-  stage();
-  if (box_num[stage_num][0]!=house_num[stage_num][0]){
+  stage();//맵 불러오기
+
+  if (box_num[stage_num][0]!=house_num[stage_num][0]){ //맵 오류 체크
   printf("맵 오류 : 박스 개수와 보관장소 개수 불일치\n프로그램을 종료합니다.");
   return 0;}
 
-
-  while(stage_num<6){
     print_stage(stage_num=0);
     whereisplayer();
     while(1)
@@ -37,23 +36,24 @@ int main(){
 
       input_char=getch();
 
-      if(input_char == 'h', 'j', 'k', 'l')
-      move();
+      if(input_char == 'h', 'j', 'k', 'l'){
+      move();}
 
-      nstage_check();
+      if (nstage_check()==0)
+      break;
     }
-  }
-
 
   return 0;
 }
 
+//---------------------START---------------------
 void start(){
   int i=0;
   printf("Start...\nInput name : ");
   scanf("%s",name);
 }
 
+//------------STAGE : 맵 불러오기 ---------------
 void stage(){
   int x = 0, y = 0;
   char ch;
@@ -63,7 +63,7 @@ void stage(){
   fp=fopen("map.txt","r");
   while(fscanf(fp,"%c",&ch) != EOF)
   {
-    if (ch=='m'){
+    if (ch=='m'){ //m이 입력되었을 때 stage_num 증가시켜 맵 번호 할당
       stage_num++;
       x=0;
       y=-1;
@@ -98,10 +98,10 @@ void stage(){
 
   fclose(fp);
 }
-
+//-------------PRINT_STAGE : 맵 출력하기 -----------------
 void print_stage(int stage_num){
-
-  int i;
+  system("clear");
+  int i=0;
 
   printf("Hello ");
   while(i<=10&&name[i]!=EOF){
@@ -116,6 +116,7 @@ void print_stage(int stage_num){
     }
     printf("\n");
   }
+//  whereisplayer(); // @ 위치 찾기
 }
 
 void whereisplayer(){
@@ -133,6 +134,7 @@ void whereisplayer(){
 }
 
 void move(){
+
   int dx=0, dy=0;
   switch (input_char){
     case 'h':
@@ -170,7 +172,7 @@ void move(){
 
   playery+=dy;
   playerx+=dx;
-  system("clear");
+ //system("clear");
   print_stage(stage_num);
   }
 }
@@ -189,14 +191,15 @@ int nstage_check(){
   }
   if (ok==house_num[stage_num][0]){
     system("clear");
-    printf("클리어");
+    printf("클리어 (짝짝짝) \n");
+    sleep(2);
     stage_num++;
-    print_stage(stage_num);
-    //return 0;
+    whereisplayer();
+    if (stage_num<5) print_stage(stage_num);
+    else return 0;
 
-    return 0;
   }
-
+  return 1;
 }
 
 
