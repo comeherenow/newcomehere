@@ -2,16 +2,20 @@
 #include <termio.h>
 #include <stdlib.h>
 #include <unistd.h>
+
 #include <time.h>
 
 void save();
 void clean(int num);
 void undo();
 void movesave();
+
+
 void start();
 void move();
 int getch();
 void stage();
+
 void print_stage(int input);
 void whereisplayer();
 int nstage_check();
@@ -74,23 +78,122 @@ int main(){
 
 /*******************start*******************/
 
+
+void print_stage(int);
+void save_stage();
+void load_stage();
+void print_load();
+void whereisplayer();
+int nstage_check();
+
+char name[10];
+
+int stage_num = -1;
+int stage_num_save = -1;
+
+int house_num[5][1];
+int house_num_save[5][1];
+
+int box_num[5][1];
+int box_num_save[5][1];
+
+char map[5][30][30];
+char mapforsave[5][30][30];
+
+char house[5][30][30]; // 보관장소
+char houseforsave[5][30][30];
+
+char box[5][30][30]; // 상자
+char boxforsave[5][30][30];
+
+int playerx,playery;
+char input_char;
+
+
+//------------------------------------------------------------------------------
+int main(){
+  start(); //시작 및 이름 입력
+  sleep(1);
+  stage();//맵 불러오기
+
+  if (box_num[stage_num][0]!=house_num[stage_num][0]){ //맵 오류 체크
+  printf("맵 오류 : 박스 개수와 보관장소 개수 불일치\n프로그램을 종료합니다.");
+  return 0;}
+
+    print_stage(stage_num=0);
+    whereisplayer();
+    while(1)
+    {
+      input_char=getch();
+
+      if(input_char == 'h', 'j', 'k', 'l')
+      {
+      move();
+      }
+
+      if (nstage_check()==0)
+      break;
+
+      if(input_char == 's')
+      {
+        save_stage();
+        printf("저장완료");
+        continue;
+      }
+
+      if(input_char == 'e')
+      {
+        save_stage();
+        return 0;
+      }
+
+      if(input_char == 'f')
+      {
+        system("clear");
+        load_stage();
+        print_load();
+        continue;
+      }
+
+      if(input_char == 'h', 'j', 'k', 'l'){
+      move();}
+
+      if (nstage_check()==0)
+      break;
+    }
+
+  return 0;
+}
+
+//---------------------START---------------------
+
 void start(){
   int i=0;
   printf("Start...\nInput name : ");
   scanf("%s",name);
 }
 
+
 /****************맵읽기(stage)****************/
 void stage(){
   int x = 0, y = 0;
   char ch=0;
+
+//------------STAGE : 맵 불러오기 ---------------
+void stage(){
+  int x = 0, y = 0;
+  char ch;
 
   FILE *fp;
 
   fp=fopen("map.txt","r");
   while(fscanf(fp,"%c",&ch) != EOF)
   {
+
     if (ch=='m'){
+
+    if (ch=='m'){ //m이 입력되었을 때 stage_num 증가시켜 맵 번호 할당
+
       stage_num++;
       x=0;
       y=-1;
@@ -123,6 +226,7 @@ void stage(){
   }
 
 
+
   //fclose(fp);
 }
 
@@ -133,11 +237,22 @@ void print_stage(int input){
 
     system("clear");
 
+  fclose(fp);
+}
+
+
+//-------------PRINT_STAGE : 맵 출력하기 -----------------
+void print_stage(int stage_num){
+  system("clear");
+  int i=0;
+
+
   printf("Hello ");
   while(i<=10&&name[i]!=EOF){
   printf("%c", name[i]);
   i++;}
   printf("\n\n"); //HELLO NAME 출력
+
 
   for(int a=0;a<30;a++){
     for(int b=0;b<30;b++){
@@ -148,6 +263,19 @@ void print_stage(int input){
 }
 
 /***************whereisplayer*************************/
+
+
+  for(int a=0;a<30;a++){
+    for(int b=0;b<30;b++){
+      printf("%c",map[stage_num][a][b]);
+    }
+    printf("\n");
+  }
+//  whereisplayer(); // @ 위치 찾기
+}
+
+//  whereisplayer(); // @ 위치 찾기
+
 void whereisplayer(){
   char ch;
   int a,b;
@@ -161,8 +289,14 @@ void whereisplayer(){
     }
   }
 }
+
 /*******************move*******************************/
 void move(){
+
+
+void move(){
+
+
   int dx=0, dy=0;
   switch (input_char){
     case 'h':
@@ -200,12 +334,19 @@ void move(){
 
   playery+=dy;
   playerx+=dx;
+
   //system("clear");
+
+ //system("clear");
+
   print_stage(stage_num);
   }
 }
 
+
 /******************nstage_check*********************/
+
+
 int nstage_check(){
   int ok=0;
 
@@ -218,6 +359,7 @@ int nstage_check(){
       }
     }
   }
+
   if (ok==house_num[stage_num][0]){
     system("clear");
     printf("클리어");
@@ -226,6 +368,15 @@ int nstage_check(){
     whereisplayer();
     clean(1);
     movesave();
+
+
+  if (ok==house_num[stage_num][0]){
+    system("clear");
+    printf("클리어 (짝짝짝) \n");
+    sleep(2);
+    stage_num++;
+    whereisplayer();
+
     if (stage_num<5) print_stage(stage_num);
     else return 0;
 
@@ -233,6 +384,7 @@ int nstage_check(){
   return 1;
 
 }
+
 
 /*****************movesave*****************************/
 void movesave()
@@ -348,6 +500,66 @@ void save(int num)
 }
 
 /******************입력(getch)*********************/
+
+void save_stage(int stage_num_save)
+{
+  int a, b;
+  FILE *save;
+
+  save=fopen("sokoban.txt","w");
+  fprintf(save,"%c",map[stage_num][a][b]);
+  fclose(save);
+}
+
+void load_stage()
+{
+  int x = 0, y = 0;
+  char ch;
+
+  FILE *load;
+
+  load = fopen("sokoban.txt","r");
+  while(fscanf(load,"%c",&ch) != EOF)
+  {
+
+    if (ch=='\n')
+    {
+      y++;
+      x=0;
+      continue;
+    }
+
+    if(ch=='O')
+    {
+      house[stage_num][y][x]=ch;
+      house_num[stage_num][0]++;
+    }
+
+    if(ch=='$')
+    {
+      box[stage_num][y][x]=ch;
+      box_num[stage_num][0]++;
+    }
+
+    map[stage_num][y][x] = ch;
+    x++;
+  }
+
+  fclose(load);
+}
+
+void print_load(int stage_num)
+{
+  for(int a=0;a<30;a++){
+    for(int b=0;b<30;b++){
+      printf("%c",map[stage_num][b][a]);
+    }
+    printf("\n");
+  }
+}
+
+
+
 int getch(void){
   char ch;
   struct termios buf;
