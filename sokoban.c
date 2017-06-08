@@ -2,39 +2,37 @@
 #include <termio.h>
 #include <stdlib.h>
 #include <unistd.h>
-
 #include <time.h>
+
+/* 게임 시작을 위한 기본적인 함수 */
+void start(); // 게임 시작해서 이름 받는 함수
+void stage();  //map.txt 파일에서 맵을 불러와 배열에 저장하는 함수
+void whereisplayer();  // 맵을 출력하기 전 창고지기의 위치를 찾는 함수
+void print_stage(int input);  // 맵 배열을 출력하는 함수
+int getch();  //옵션 값 입력받는 함수
+void move();  // 방향키 움직일 때 창고지기의 좌표 정하는 함수
+int nstage_check();  // 맵이 clear 되었는지 확인하는 함수
 
 void save();
 void clean(int num);
 void undo();
 void movesave();
-
-
-void start();
-void move();
-int getch();
-void stage();
-
-void print_stage(int input);
 void save_stage(int);
 void load_stage();
 void print_load();
-void whereisplayer();
-int nstage_check();
 
-char name[10];
+char name[10];  // 이름 입력받는 배열
 
-int stage_num = -1;
+int stage_num = -1;  // 맵 고유번호
 int stage_num_save = -1;
 
-int house_num[5][1];
+int house_num[5][1];  // 창고 위치 저장 배열
 int house_num_save[5][1];
 
-int box_num[5][1];
+int box_num[5][1];  // 상자의 위치 저장 배열
 int box_num_save[5][1];
 
-char map[5][30][30];
+char map[5][30][30];  // 맵 저장 배열
 char mapforsave[5][30][30];
 
 char house[5][30][30]; // 보관장소
@@ -43,73 +41,56 @@ char houseforsave[5][30][30];
 char box[5][30][30]; // 상자
 char boxforsave[5][30][30];
 
-int playerx,playery;
-char input_char;
-
+int playerx,playery;  // 창고지기 위치 저장 변수
+char input_char;  // 옵션키 입력받는 변수
 
 char mvsave[5][30][30];
 char base[5][30][30];
 
-int playerx,playery;
-char input_char;
-
 /**********************MAIN*************************/
 int main(){
   start();
-  sleep(1);
   stage();
-  save(1);
 
   if (box_num[stage_num][0]!=house_num[stage_num][0]){
-  printf("맵 오류 : 박스 개수와 보관장소 개수 불일치\n프로그램을 종료합니다.");
-  return 0;}
-
+    printf("맵 오류 : 박스 개수와 보관장소 개수 불일치\n프로그램을 종료합니다.");
+    return 0;
+  }
   print_stage(stage_num=0);
   movesave();
   whereisplayer();
   while(1)
   {
-
     input_char=getch();
-
     if(input_char == 'h'||input_char == 'j'||input_char == 'k'||input_char == 'l'){
-    movesave();
-    move();
-    if (nstage_check()==0)
-    break;
+      movesave();
+      move();
+      if (nstage_check()==0)
+        break;
     }
-
-    if(input_char == 's')
-    {
+    if(input_char == 's'){
       save_stage(stage_num);
       printf("저장완료");
       continue;
     }
-
-    if(input_char == 'e')
-    {
+    if(input_char == 'e'){
       save_stage(stage_num);
       return 0;
     }
-
-    if(input_char == 'f')
-    {
+    if(input_char == 'f'){
       system("clear");
       load_stage();
       print_load();
       continue;
     }
-
     if(input_char == 'u')
-    undo();
-
+      undo();
     if(input_char == 'n'){
         clean(2);
         save(2);
         whereisplayer();
         print_stage(stage_num=0);
     }
-
     if(input_char == 'r'){
         clean(2);
         save(2);
@@ -119,29 +100,15 @@ int main(){
   }
   return 0;
 }
-
 /*******************start*******************/
-
-
-
-//------------------------------------------------------------------------------
-
-
-//---------------------START---------------------
 
 void start(){
   int i=0;
   printf("Start...\nInput name : ");
   scanf("%s",name);
 }
-
-
 /****************맵읽기(stage)****************/
-//void stage(){
-//  int x = 0, y = 0;
-//  char ch=0;
 
-//------------STAGE : 맵 불러오기 ---------------
 void stage(){
   int x = 0, y = 0;
   char ch;
@@ -149,19 +116,16 @@ void stage(){
   FILE *fp;
 
   fp=fopen("map1.txt","r");
-  while(fscanf(fp,"%c",&ch) != EOF)
-  {
-
+  while(fscanf(fp,"%c",&ch) != EOF){
     if (ch=='m'){ //m이 입력되었을 때 stage_num 증가시켜 맵 번호 할당
-
       stage_num++;
       x=0;
       y=-1;
-      continue;}
-
+      continue;
+    }
     if((ch=='a') || (ch == 'p')){
-      continue;}
-
+      continue;
+    }
     if (ch=='\n'){
       y++;
       x=0;
@@ -173,46 +137,28 @@ void stage(){
     if(ch=='O'){
       house[stage_num][y][x]=ch;
       house_num[stage_num][0]++;
-
     }
     if(ch=='$'){
       box[stage_num][y][x]=ch;
       box_num[stage_num][0]++;
     }
-
     map[stage_num][y][x] = ch;
     x++;
-
   }
-
-
-
-  //fclose(fp);
+  fclose(fp);
 }
-
 /*****************맵출력(print_stage)******************/
-//void print_stage(int input){
-//
-  //  int i;
-//
-  //  system("clear");
-///
-//  fclose(fp);
 
-
-
-//-------------PRINT_STAGE : 맵 출력하기 -----------------
 void print_stage(int stage_num){
   system("clear");
   int i=0;
 
-
   printf("Hello ");
   while(i<=10&&name[i]!=EOF){
-  printf("%c", name[i]);
-  i++;}
+    printf("%c", name[i]);
+    i++;
+  }
   printf("\n\n"); //HELLO NAME 출력
-
 
   for(int a=0;a<30;a++){
     for(int b=0;b<30;b++){
@@ -224,19 +170,7 @@ void print_stage(int stage_num){
 
 /***************whereisplayer*************************/
 
-
-//  for(int a=0;a<30;a++){
-  //  for(int b=0;b<30;b++){
-    //  printf("%c",map[stage_num][a][b]);
-  //  }
-  //  printf("\n");
-//  }
-//  whereisplayer(); // @ 위치 찾기
-//}
-
-//  whereisplayer(); // @ 위치 찾기
-
-void whereisplayer(){
+void whereisplayer(){  //@ 위치 찾기
   char ch;
   int a,b;
   for(b=0;b<30;b++){
@@ -251,60 +185,45 @@ void whereisplayer(){
 }
 
 /*******************move*******************************/
-
-
 void move(){
-
-
   int dx=0, dy=0;
   switch (input_char){
     case 'h':
-    dx = -1;
-    dy = 0;
-    break;
-
+      dx = -1;
+      dy = 0;
+      break;
     case 'j':
-    dx = 0;
-    dy = 1;
-    break;
-
+      dx = 0;
+      dy = 1;
+      break;
     case 'k':
-    dx = 0;
-    dy = -1;
-    break;
-
+      dx = 0;
+      dy = -1;
+      break;
     case 'l':
-    dx = 1;
-    dy = 0;
-    break;
+      dx = 1;
+      dy = 0;
+      break;
   }
-
   if (map[stage_num][playery+dy][playerx+dx]!='#'){
-  map[stage_num][playery][playerx]=' ';
+    map[stage_num][playery][playerx]=' ';
     if (map[stage_num][playery+dy][playerx+dx]=='$'){
       if (map[stage_num][playery+2*dy][playerx+2*dx]=='#'||map[stage_num][playery+2*dy][playerx+2*dx]=='$'){ //2-1
-        return;}
-        map[stage_num][playery+2*dy][playerx+2*dx]='$';}
+        return;
+      }
+      map[stage_num][playery+2*dy][playerx+2*dx]='$';
+    }
+    if (house[stage_num][playery][playerx]=='O')
+      map[stage_num][playery][playerx]='O';
+    map[stage_num][playery+dy][playerx+dx]='@';
 
-  if (house[stage_num][playery][playerx]=='O')
-  map[stage_num][playery][playerx]='O';
-
-  map[stage_num][playery+dy][playerx+dx]='@';
-
-  playery+=dy;
-  playerx+=dx;
-
-  //system("clear");
-
- //system("clear");
-
-  print_stage(stage_num);
+    playery+=dy;
+    playerx+=dx;
+    print_stage(stage_num);
   }
 }
 
-
 /******************nstage_check*********************/
-
 
 int nstage_check(){
   int ok=0;
@@ -318,9 +237,6 @@ int nstage_check(){
       }
     }
   }
-
-
-
   if (ok==house_num[stage_num][0]){
     system("clear");
     printf("클리어 (짝짝짝) \n");
@@ -329,17 +245,16 @@ int nstage_check(){
     whereisplayer();
     clean(1);
     movesave();
-
-    if (stage_num<5) print_stage(stage_num);
-    else return 0;
-
+    if (stage_num<5)
+      print_stage(stage_num);
+    else
+      return 0;
   }
   return 1;
-
 }
 
-
 /*****************movesave*****************************/
+
 void movesave()
 {
             for(int a=3; a>=0; a--){
@@ -514,8 +429,6 @@ void print_load(int stage_num)
     printf("\n");
   }
 }
-
-
 
 int getch(void){
   char ch;
