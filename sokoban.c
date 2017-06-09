@@ -1,4 +1,4 @@
-#include <stdio.h>
+﻿#include <stdio.h>
 #include <termio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -21,6 +21,8 @@ void movesave();
 void save_stage(int);
 void load_stage();
 void print_load();
+void calculate_time();
+void show_me_display();
 
 char name[10];  // 이름 입력받는 배열
 
@@ -48,9 +50,9 @@ char input_char;  // 옵션키 입력받는 변수
 char mvsave[5][30][30];
 char base[5][30][30];
 
-double gap; // 시간 측정 변수
+double gap=0, exitgap=0; // 시간 측정 변수
 
-clock_t startgame=0,endgame=0;
+clock_t startgame=0,endgame=0,stop=0,stopend=0;
 
 /**********************MAIN*************************/
 int main(){
@@ -79,7 +81,6 @@ float times[5][eachrank[size]+1];
       movesave();
       move();
       if (nstage_check()==0)
-        startgame=clock();
         break;
 
     }
@@ -89,6 +90,8 @@ float times[5][eachrank[size]+1];
       continue;
     }
     if(input_char == 'e'){
+      endgame=clock();
+      calculate_time();
       save_stage(stage_num);
       return 0;
     }
@@ -112,11 +115,14 @@ float times[5][eachrank[size]+1];
         whereisplayer();
         print_stage(stage_num);
     }
+    if(input_char == 'd'){
+      show_me_display();
+      print_stage(stage_num);
+      continue;
+    }
   }
-  endgame=clock();
+
   size++;
-  gap=(float)(endgame-startgame)/CLK_TCK;
-//  printf("time: %f sec\n", gap);
   return 0;
 }
 /*******************start*******************/
@@ -186,6 +192,7 @@ void print_stage(int stage_num){
   system("clear");
   printf("Hello %s", name);
   printf("\n\n"); //HELLO NAME 출력
+
 
   for(int a=0;a<30;a++){
     for(int b=0;b<30;b++){
@@ -265,6 +272,10 @@ int nstage_check(){
     }
   }
   if (ok==house_num[stage_num][0]){
+    endgame=clock();
+    calculate_time();
+    startgame=0;
+    endgame=0;
     system("clear");
     printf("클리어 (짝짝짝) \n");
     sleep(2);
@@ -273,7 +284,8 @@ int nstage_check(){
     clean(1);
     movesave();
     if (stage_num<5)
-      print_stage(stage_num);
+      {print_stage(stage_num);
+      startgame=clock();}
     else
       return 0;
   }
@@ -470,4 +482,29 @@ int getch(void){
   ch=getchar();
   tcsetattr(0,TCSAFLUSH,&save);
   return ch;
+}
+/***************시간 측정하기***************/
+void calculate_time()
+{
+  gap=((float)(endgame-startgame)-(float)(stopend-stop))/CLK_TCK;
+}
+/*****************디스플레이****************/
+void show_me_display()
+{
+  system("clear");
+  printf("Hello %s\n", name);
+  printf("\n\n");
+  printf("h(왼쪽),j(아래),k(위),l(오른쪽)\n");
+  printf("u(undo)\n");
+  printf("r(replay)\n");
+  printf("n(new)\n");
+  printf("e(exit)\n");
+  printf("s(save)\n");
+  printf("f(file load)\n");
+  printf("d(display help)\n");
+  printf("t(top)\n");
+
+  if (getch()) return;
+
+
 }
