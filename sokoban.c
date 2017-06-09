@@ -87,12 +87,14 @@ float times[5][eachrank[size]+1];
     if(input_char == 's'){
       save_stage(stage_num);
       printf("저장완료");
+      printf("\n(Command)  %c\n", input_char);
       continue;
     }
     if(input_char == 'e'){
       endgame=clock();
       calculate_time();
       save_stage(stage_num);
+      printf("\n(Command)  %c\n", input_char);
       return 0;
     }
     if(input_char == 'f'){
@@ -101,21 +103,26 @@ float times[5][eachrank[size]+1];
       print_load();
       continue;
     }
-    if(input_char == 'u')
+    if(input_char == 'u'){
+      printf("\n(Command)  %c\n", input_char);
       undo();
+    }
     if(input_char == 'n'){
+        printf("\n(Command)  %c\n", input_char);
         clean(2);
         save(2);
         whereisplayer();
         print_stage(stage_num=0);
     }
     if(input_char == 'r'){
+        printf("\n(Command)  %c\n", input_char);
         clean(2);
         save(2);
         whereisplayer();
         print_stage(stage_num);
     }
     if(input_char == 'd'){
+      printf("\n(Command)  %c\n", input_char);
       show_me_display();
       print_stage(stage_num);
       continue;
