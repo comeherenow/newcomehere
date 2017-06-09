@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <termio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <time.h>
 
@@ -47,8 +48,19 @@ char input_char;  // 옵션키 입력받는 변수
 char mvsave[5][30][30];
 char base[5][30][30];
 
+double gap; // 시간 측정 변수
+
+clock_t startgame=0,endgame=0;
+
 /**********************MAIN*************************/
 int main(){
+
+int size=0;
+
+int eachrank[size];
+float times[5][eachrank[size]+1];
+
+
   start();
   stage();
 
@@ -57,6 +69,7 @@ int main(){
     return 0;
   }
   print_stage(stage_num=0);
+  startgame=clock();
   movesave();
   whereisplayer();
   while(1)
@@ -66,7 +79,9 @@ int main(){
       movesave();
       move();
       if (nstage_check()==0)
+        startgame=clock();
         break;
+
     }
     if(input_char == 's'){
       save_stage(stage_num);
@@ -98,6 +113,10 @@ int main(){
         print_stage(stage_num);
     }
   }
+  endgame=clock();
+  size++;
+  gap=(float)(endgame-startgame)/CLK_TCK;
+//  printf("time: %f sec\n", gap);
   return 0;
 }
 /*******************start*******************/
@@ -106,6 +125,19 @@ void start(){
   int i=0;
   printf("Start...\nInput name : ");
   scanf("%s",name);
+
+  if(strlen(name)>10){
+  printf("10자 이상 입력할 수 없습니다.\n");
+  exit(1);
+}
+else {
+
+  while(name[i]!='\0'){
+      if((('a'<=name[i])&&(name[i]<='z'))||(('A'<=name[i])&&(name[i]<='Z')));
+      else {printf("한글은 입력할 수 없습니다.\n"); exit(1) ;}
+      i++;
+    }
+  }
 }
 /****************맵읽기(stage)****************/
 
@@ -150,14 +182,9 @@ void stage(){
 /*****************맵출력(print_stage)******************/
 
 void print_stage(int stage_num){
-  system("clear");
   int i=0;
-
-  printf("Hello ");
-  while(i<=10&&name[i]!=EOF){
-    printf("%c", name[i]);
-    i++;
-  }
+  system("clear");
+  printf("Hello %s", name);
   printf("\n\n"); //HELLO NAME 출력
 
   for(int a=0;a<30;a++){
