@@ -21,7 +21,7 @@ void movesave();
 void save_stage(int);
 void load_stage();
 void print_load();
-void calculate_time();
+void how_long_you_play();
 void show_me_display();
 
 char name[10];  // 이름 입력받는 배열
@@ -92,7 +92,7 @@ float times[5][eachrank[size]+1];
     }
     if(input_char == 'e'){
       endgame=clock();
-      calculate_time();
+      how_long_you_play();
       save_stage(stage_num);
       printf("\n(Command)  %c\n", input_char);
       return 0;
@@ -280,7 +280,7 @@ int nstage_check(){
   }
   if (ok==house_num[stage_num][0]){
     endgame=clock();
-    calculate_time();
+    how_long_you_play();
     startgame=0;
     endgame=0;
     system("clear");
@@ -491,7 +491,7 @@ int getch(void){
   return ch;
 }
 /***************시간 측정하기***************/
-void calculate_time()
+void how_long_you_play()
 {
   gap=((float)(endgame-startgame)-(float)(stopend-stop))/CLK_TCK;
 }
