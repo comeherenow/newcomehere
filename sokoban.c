@@ -435,7 +435,6 @@ void save_stage(int stage_num)
 
   save=fopen("sokoban.txt","wt");
 
-  fprintf(save, "map %d\n", stage_num);
   for (a=0; a<30; a++)
   {
     fprintf(save,"\n");
@@ -459,12 +458,6 @@ void load_stage()
   load = fopen("sokoban.txt","r");
   while(fscanf(load,"%c",&ch) != EOF)
   {
-    if (ch=='m'||ch=='a'||'p')
-    continue;
-
-    if(ch>='0'&&ch<='4')
-    stage_num=ch;
-
     if (ch=='\n')
     {
       y++;
