@@ -1,4 +1,4 @@
-﻿#include <stdio.h>
+#include <stdio.h>
 #include <termio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -24,6 +24,8 @@ void load_stage();
 void print_load();
 void how_long_you_play();
 void show_me_display();
+
+int undocount=0; //undo횟수
 
 char name[11];  // 이름 입력받는 배열
 
@@ -326,9 +328,6 @@ void movesave()
 /********************undo*************************/
 void undo()
 {
-    int undocount=0;
-    int i=0;
-
     if(undocount <5)
     {
     system("clear");
@@ -428,7 +427,7 @@ void save_stage(int stage_num)
   FILE *save;
 
   save=fopen("sokoban.txt","w");
-  
+
   for (a=0; a<30; a++)
   {
     fprintf(save,"%c","\n");
@@ -437,7 +436,7 @@ void save_stage(int stage_num)
       fprintf(save,"%c",map[stage_num][b][a]);
     }
   }
-  
+
   fclose(save);
 }
 
