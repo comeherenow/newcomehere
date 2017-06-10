@@ -152,7 +152,7 @@ void start(){
       }
       else {
         printf("한글은 입력할 수 없습니다.\n");
-        exit(1) ;
+        exit(1);
       }
     i++;
    }
