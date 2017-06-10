@@ -108,8 +108,7 @@ float times[5][eachrank[size]+1];
     if(input_char == 'f'){
       system("clear");
       load_stage();
-      //print_load();
-      print_stage(stage_num);
+      print_load();
       continue;
     }
     if(input_char == 'u'){
