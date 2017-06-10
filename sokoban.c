@@ -50,8 +50,11 @@ char boxforsave[5][30][30];
 int playerx,playery;  // 창고지기 위치 저장 변수
 char input_char;  // 옵션키 입력받는 변수
 
-char mvsave[5][30][30];
-char base[5][30][30];
+char mvsave[5][30][30]; //undo 하기전 움직임 저장
+
+char base_map[5][30][30]; //초기 맵상태 저장
+char base_box[5][30][30];
+char base_house[5][30][30];
 
 double gap=0, exitgap=0; // 시간 측정 변수
 
@@ -68,6 +71,7 @@ float times[5][eachrank[size]+1];
 
   start();
   stage();
+  save(1);
 
   if (box_num[stage_num][0]!=house_num[stage_num][0]){
     printf("맵 오류 : 박스 개수와 보관장소 개수 불일치\n프로그램을 종료합니다.");
@@ -80,6 +84,7 @@ float times[5][eachrank[size]+1];
   while(1)
   {
     input_char=getch();
+
     if(input_char == 'h'||input_char == 'j'||input_char == 'k'||input_char == 'l'){
       movesave();
       move();
@@ -149,10 +154,10 @@ void start(){
   else {
     while (name[i]!='\0'){
       if((('a'<=name[i])&&(name[i]<='z'))||(('A'<=name[i])&&(name[i]<='Z')));
-      }
+
       else {
         printf("한글은 입력할 수 없습니다.\n");
-        exit(1) ;
+        exit(1);
       }
     i++;
    }
@@ -383,6 +388,7 @@ void clean(int num)
                 map[a][b][c]='\0';
                 box[a][b][c]='\0';
                 house[a][b][c]='\0';
+                undocount=0;
             }
         }
     }
@@ -390,7 +396,7 @@ void clean(int num)
 
 }
 }
-/*******************save**************************/
+/*******************초기 맵상태저장(save)**************************/
 void save(int num)
 {
     switch (num) {
@@ -399,7 +405,9 @@ void save(int num)
     for(int a=0; a<5; a++){
         for(int b=0; b<30; b++){
             for(int c=0; c<30; c++){
-                base[a][b][c]=map[a][b][c];
+                base_map[a][b][c]=map[a][b][c];
+                base_box[a][b][c]=box[a][b][c];
+                base_house[a][b][c]=house[a][b][c];
             }
         }
     }
@@ -408,28 +416,30 @@ void save(int num)
     for(int a=0; a<5; a++){
         for(int b=0; b<30; b++){
             for(int c=0; c<30; c++){
-                map[a][b][c]=base[a][b][c];
+                map[a][b][c]=base_map[a][b][c];
+                house[a][b][c]=base_house[a][b][c];
+                box[a][b][c]=base_box[a][b][c];
             }
         }
     }
 }
 }
 
-/****************세이브*******************/
+/****************현재 맵상태저장(save_stage)******************/
 
 void save_stage(int stage_num)
 {
   int a, b;
   FILE *save;
 
-  save=fopen("sokoban.txt","w");
+  save=fopen("sokoban.txt","wt");
 
   for (a=0; a<30; a++)
   {
-    fprintf(save,"%c","\n");
+    fprintf(save,"\n");
     for (b=0; b<30; b++)
     {
-      fprintf(save,"%c",map[stage_num][b][a]);
+      fprintf(save,"%c",map[stage_num][a][b]);
     }
   }
 
@@ -447,7 +457,6 @@ void load_stage()
   load = fopen("sokoban.txt","r");
   while(fscanf(load,"%c",&ch) != EOF)
   {
-
     if (ch=='\n')
     {
       y++;
@@ -485,6 +494,7 @@ void print_load(int stage_num)
   }
 }
 
+/******************입력(getch)********************/
 int getch(void){
   char ch;
   struct termios buf;
