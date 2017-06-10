@@ -149,7 +149,7 @@ void start(){
   else {
     while (name[i]!='\0'){
       if((('a'<=name[i])&&(name[i]<='z'))||(('A'<=name[i])&&(name[i]<='Z')));
-      }
+
       else {
         printf("한글은 입력할 수 없습니다.\n");
         exit(1);
@@ -422,14 +422,14 @@ void save_stage(int stage_num)
   int a, b;
   FILE *save;
 
-  save=fopen("sokoban.txt","w");
+  save=fopen("sokoban.txt","wt");
 
   for (a=0; a<30; a++)
   {
-    fprintf(save,"%c","\n");
+    fprintf(save,"\n");
     for (b=0; b<30; b++)
     {
-      fprintf(save,"%c",map[stage_num][b][a]);
+      fprintf(save,"%c",map[stage_num][a][b]);
     }
   }
 
