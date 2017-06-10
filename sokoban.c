@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <string.h>
 #include <time.h>
 
 /* 게임 시작을 위한 기본적인 함수 */
@@ -24,7 +25,7 @@ void print_load();
 void how_long_you_play();
 void show_me_display();
 
-char name[10];  // 이름 입력받는 배열
+char name[11];  // 이름 입력받는 배열
 
 int stage_num = -1;  // 맵 고유번호
 int stage_num_save = -1;
@@ -140,18 +141,22 @@ void start(){
   scanf("%s",name);
 
   if(strlen(name)>10){
-  printf("10자 이상 입력할 수 없습니다.\n");
-  exit(1);
-}
-else {
-
-  while(name[i]!='\0'){
-      if((('a'<=name[i])&&(name[i]<='z'))||(('A'<=name[i])&&(name[i]<='Z')));
-      else {printf("한글은 입력할 수 없습니다.\n"); exit(1) ;}
-      i++;
-    }
+    printf("10자 이상 입력할 수 업습니다.\n");
+    exit(1);
   }
+  else {
+    while (name[i]!='\0'){
+      if((('a'<=name[i])&&(name[i]<='z'))||(('A'<=name[i])&&(name[i]<='Z')));
+      }
+      else {
+        printf("한글은 입력할 수 없습니다.\n");
+        exit(1) ;
+      }
+    i++;
+   }
+ }
 }
+
 /****************맵읽기(stage)****************/
 
 void stage(){
@@ -160,7 +165,7 @@ void stage(){
 
   FILE *fp;
 
-  fp=fopen("map1.txt","r");
+  fp=fopen("map.txt","r");
   while(fscanf(fp,"%c",&ch) != EOF){
     if (ch=='m'){ //m이 입력되었을 때 stage_num 증가시켜 맵 번호 할당
       stage_num++;
@@ -198,6 +203,7 @@ void print_stage(int stage_num){
   int i=0;
   system("clear");
   printf("Hello %s", name);
+
   printf("\n\n"); //HELLO NAME 출력
 
 
