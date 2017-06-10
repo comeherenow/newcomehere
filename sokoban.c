@@ -428,8 +428,16 @@ void save_stage(int stage_num)
   FILE *save;
 
   save=fopen("sokoban.txt","w");
-
-  fprintf(save,"%c",map[stage_num][a][b]);
+  
+  for (a=0; a<30; a++)
+  {
+    fprintf(save,"%c","\n");
+    for (b=0; b<30; b++)
+    {
+      fprintf(save,"%c",map[stage_num][b][a]);
+    }
+  }
+  
   fclose(save);
 }
 
