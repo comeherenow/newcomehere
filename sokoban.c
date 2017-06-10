@@ -202,7 +202,6 @@ void stage(){
 /*****************맵출력(print_stage)******************/
 
 void print_stage(int stage_num){
-  int i=0;
   system("clear");
   printf("Hello %s", name);
 
@@ -330,13 +329,10 @@ void undo()
 {
     if(undocount <5)
     {
-    system("clear");
+        system("clear");
+        printf("Hello %s", name);
 
-  printf("Hello ");
-  while(i<=10&&name[i]!=EOF){
-  printf("%c", name[i]);
-  i++;}
-  printf("\n\n"); //HELLO NAME 출력
+        printf("\n\n"); //HELLO NAME 출력
 
   for(int a=0;a<30;a++){
     for(int b=0;b<30;b++){
