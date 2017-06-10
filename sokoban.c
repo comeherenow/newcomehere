@@ -1,6 +1,7 @@
-#include <stdio.h>
+﻿#include <stdio.h>
 #include <termio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <string.h>
 #include <time.h>
@@ -21,6 +22,8 @@ void movesave();
 void save_stage(int);
 void load_stage();
 void print_load();
+void how_long_you_play();
+void show_me_display();
 
 char name[11];  // 이름 입력받는 배열
 
@@ -48,8 +51,19 @@ char input_char;  // 옵션키 입력받는 변수
 char mvsave[5][30][30];
 char base[5][30][30];
 
+double gap=0, exitgap=0; // 시간 측정 변수
+
+clock_t startgame=0,endgame=0,stop=0,stopend=0;
+
 /**********************MAIN*************************/
 int main(){
+
+int size=0;
+
+int eachrank[size];
+float times[5][eachrank[size]+1];
+
+
   start();
   stage();
 
@@ -58,6 +72,7 @@ int main(){
     return 0;
   }
   print_stage(stage_num=0);
+  startgame=clock();
   movesave();
   whereisplayer();
   while(1)
@@ -68,14 +83,19 @@ int main(){
       move();
       if (nstage_check()==0)
         break;
+
     }
     if(input_char == 's'){
       save_stage(stage_num);
       printf("저장완료");
+      printf("\n(Command)  %c\n", input_char);
       continue;
     }
     if(input_char == 'e'){
+      endgame=clock();
+      how_long_you_play();
       save_stage(stage_num);
+      printf("\n(Command)  %c\n", input_char);
       return 0;
     }
     if(input_char == 'f'){
@@ -84,21 +104,33 @@ int main(){
       print_load();
       continue;
     }
-    if(input_char == 'u')
+    if(input_char == 'u'){
+      printf("\n(Command)  %c\n", input_char);
       undo();
+    }
     if(input_char == 'n'){
+        printf("\n(Command)  %c\n", input_char);
         clean(2);
         save(2);
         whereisplayer();
         print_stage(stage_num=0);
     }
     if(input_char == 'r'){
+        printf("\n(Command)  %c\n", input_char);
         clean(2);
         save(2);
         whereisplayer();
         print_stage(stage_num);
     }
+    if(input_char == 'd'){
+      printf("\n(Command)  %c\n", input_char);
+      show_me_display();
+      print_stage(stage_num);
+      continue;
+    }
   }
+
+  size++;
   return 0;
 }
 /*******************start*******************/
@@ -114,17 +146,17 @@ void start(){
   }
   else {
     while (name[i]!='\0'){
-      if((('a'<=name[i])&&(name[i]<='z'))||(('A'<=name[i])&&(name[i]<='Z'))) {
-        i++;
-        continue;
+      if((('a'<=name[i])&&(name[i]<='z'))||(('A'<=name[i])&&(name[i]<='Z')));
       }
       else {
         printf("한글은 입력할 수 없습니다.\n");
         exit(1) ;
       }
-      }
-    }
-  }
+    i++;
+   }
+ }
+}
+
 /****************맵읽기(stage)****************/
 
 void stage(){
@@ -170,8 +202,10 @@ void stage(){
 void print_stage(int stage_num){
   int i=0;
   system("clear");
-  printf("Hello %s",name);
+  printf("Hello %s", name);
+
   printf("\n\n"); //HELLO NAME 출력
+
 
   for(int a=0;a<30;a++){
     for(int b=0;b<30;b++){
@@ -251,6 +285,10 @@ int nstage_check(){
     }
   }
   if (ok==house_num[stage_num][0]){
+    endgame=clock();
+    how_long_you_play();
+    startgame=0;
+    endgame=0;
     system("clear");
     printf("클리어 (짝짝짝) \n");
     sleep(2);
@@ -259,7 +297,8 @@ int nstage_check(){
     clean(1);
     movesave();
     if (stage_num<5)
-      print_stage(stage_num);
+      {print_stage(stage_num);
+      startgame=clock();}
     else
       return 0;
   }
@@ -456,4 +495,29 @@ int getch(void){
   ch=getchar();
   tcsetattr(0,TCSAFLUSH,&save);
   return ch;
+}
+/***************시간 측정하기***************/
+void how_long_you_play()
+{
+  gap=((float)(endgame-startgame)-(float)(stopend-stop))/CLK_TCK;
+}
+/*****************디스플레이****************/
+void show_me_display()
+{
+  system("clear");
+  printf("Hello %s\n", name);
+  printf("\n\n");
+  printf("h(왼쪽),j(아래),k(위),l(오른쪽)\n");
+  printf("u(undo)\n");
+  printf("r(replay)\n");
+  printf("n(new)\n");
+  printf("e(exit)\n");
+  printf("s(save)\n");
+  printf("f(file load)\n");
+  printf("d(display help)\n");
+  printf("t(top)\n");
+
+  if (getch()) return;
+
+
 }
