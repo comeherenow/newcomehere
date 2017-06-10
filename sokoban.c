@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <string.h>
 #include <time.h>
 
 /* 게임 시작을 위한 기본적인 함수 */
@@ -23,8 +24,11 @@ void load_stage();
 void print_load();
 void how_long_you_play();
 void show_me_display();
+void check_time();
 
-char name[10];  // 이름 입력받는 배열
+int undocount=0; //undo횟수
+
+char name[11];  // 이름 입력받는 배열
 
 int stage_num = -1;  // 맵 고유번호
 int stage_num_save = -1;
@@ -54,13 +58,11 @@ double gap=0, exitgap=0; // 시간 측정 변수
 
 clock_t startgame=0,endgame=0,stop=0,stopend=0;
 
+int size;
+
 /**********************MAIN*************************/
 int main(){
 
-int size=0;
-
-int eachrank[size];
-float times[5][eachrank[size]+1];
 
 
   start();
@@ -94,7 +96,12 @@ float times[5][eachrank[size]+1];
       endgame=clock();
       how_long_you_play();
       save_stage(stage_num);
+      system("clear");
+      printf("\n");
+      printf("S E E    Y O U    %s\n",name );
+      printf("\n");
       printf("\n(Command)  %c\n", input_char);
+      printf("\n");
       return 0;
     }
     if(input_char == 'f'){
@@ -123,13 +130,25 @@ float times[5][eachrank[size]+1];
     }
     if(input_char == 'd'){
       printf("\n(Command)  %c\n", input_char);
+      stop=clock();
       show_me_display();
       print_stage(stage_num);
+      stopend=clock();
       continue;
+    }
+    if(input_char == 't'){
+      printf("\n(Command)  %c\n", input_char);
+      stop=clock();
+      check_time();
+      print_stage(stage_num);
+      stopend=clock();
+      continue;
+
+
     }
   }
 
-  size++;
+
   return 0;
 }
 /*******************start*******************/
@@ -140,18 +159,22 @@ void start(){
   scanf("%s",name);
 
   if(strlen(name)>10){
-  printf("10자 이상 입력할 수 없습니다.\n");
-  exit(1);
-}
-else {
-
-  while(name[i]!='\0'){
-      if((('a'<=name[i])&&(name[i]<='z'))||(('A'<=name[i])&&(name[i]<='Z')));
-      else {printf("한글은 입력할 수 없습니다.\n"); exit(1) ;}
-      i++;
-    }
+    printf("10자 이상 입력할 수 업습니다.\n");
+    exit(1);
   }
+  else {
+    while (name[i]!='\0'){
+      if((('a'<=name[i])&&(name[i]<='z'))||(('A'<=name[i])&&(name[i]<='Z')));
+
+      else {
+        printf("한글은 입력할 수 없습니다.\n");
+        exit(1) ;
+      }
+    i++;
+   }
+ }
 }
+
 /****************맵읽기(stage)****************/
 
 void stage(){
@@ -195,9 +218,9 @@ void stage(){
 /*****************맵출력(print_stage)******************/
 
 void print_stage(int stage_num){
-  int i=0;
   system("clear");
   printf("Hello %s", name);
+
   printf("\n\n"); //HELLO NAME 출력
 
 
@@ -320,18 +343,12 @@ void movesave()
 /********************undo*************************/
 void undo()
 {
-    int undocount=0;
-    int i=0;
-
     if(undocount <5)
     {
-    system("clear");
+        system("clear");
+        printf("Hello %s", name);
 
-  printf("Hello ");
-  while(i<=10&&name[i]!=EOF){
-  printf("%c", name[i]);
-  i++;}
-  printf("\n\n"); //HELLO NAME 출력
+        printf("\n\n"); //HELLO NAME 출력
 
   for(int a=0;a<30;a++){
     for(int b=0;b<30;b++){
@@ -423,7 +440,15 @@ void save_stage(int stage_num)
 
   save=fopen("sokoban.txt","w");
 
-  fprintf(save,"%c",map[stage_num][a][b]);
+  for (a=0; a<30; a++)
+  {
+    fprintf(save,"%c","\n");
+    for (b=0; b<30; b++)
+    {
+      fprintf(save,"%c",map[stage_num][b][a]);
+    }
+  }
+
   fclose(save);
 }
 
@@ -494,6 +519,7 @@ int getch(void){
 void how_long_you_play()
 {
   gap=((float)(endgame-startgame)-(float)(stopend-stop))/CLK_TCK;
+    printf("%fsec\n",gap);
 }
 /*****************디스플레이****************/
 void show_me_display()
@@ -514,4 +540,37 @@ void show_me_display()
   if (getch()) return;
 
 
+}
+/***************파일 열어서 top옵션(랭킹) 불러오기********************/
+void check_time()
+{
+
+
+int eachrank[size];
+float seetimerank[5][eachrank[size]+1];
+
+system("clear");
+FILE *rank;
+rank = fopen("ranking.txt","w");
+
+how_long_you_play();
+
+seetimerank[0][0]=gap;
+how_long_you_play();
+seetimerank[1][0]=gap;
+how_long_you_play();
+seetimerank[2][0]=gap;
+how_long_you_play();
+seetimerank[3][0]=gap;
+how_long_you_play();
+seetimerank[4][0]=gap;
+
+
+//fscanf(rank,"%f",gap);
+
+
+fprintf(rank, "%f\n",gap );
+printf("%f second\n",gap);
+fclose(rank);
+if (getch()) return;
 }
