@@ -123,7 +123,7 @@ float times[5][eachrank[size]+1];
         print_stage(stage_num=0);
     }
     if(input_char == 'r'){
-        //printf("\n(Command)  %c\n", input_char);
+        printf("\n(Command)  %c\n", input_char);
         clean(2);
         save(2);
         whereisplayer();
