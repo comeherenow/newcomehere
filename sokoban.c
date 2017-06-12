@@ -559,11 +559,11 @@ void check_time()
   fp=fopen("ranking.txt","w+t");
   while(fscanf(fp,"%s", &ch)!=EOF)
   {
-      if(ch[0]=='m'&&ch[1]=='a'&&ch[2]=='p')
+      if(ch[0]=='m'&&ch[1]=='a'&&ch[2]=='p') //랭킹 파일을 열어서 map이 나오면 숫자1,2,3,4,5 알려줌
       num_map=ch[3]-49;
 
-      if(ch[4]=='s'&&ch[5]=='e'&&ch[6]=='c'){
-          sec=ch[0]*10 + ch[1]*1 + ch[3]*0.1 - 532.8;
+      if(ch[4]=='s'&&ch[5]=='e'&&ch[6]=='c'){ //sec앞에 있는 시간을 뽑아내서 출력하기 위해
+          sec=ch[0]*10 + ch[1]*1 + ch[3]*0.1 - 532.8;//시간을 sec에 저장
           for(int a=0; a<5; a++){
               if(ranking[num_map][a]=='\0'){
               ranking[num_map][a]=sec;
@@ -577,7 +577,7 @@ void check_time()
       ch[b]='\0';
   }
 
-//버블 정렬
+//버블 정렬해서 게임 순위 나타냄
 ranking[5][5]=0;//k=n l=i y=j i=h j=k
 int i,j,k,l,y;
 for(k=0;k<5;k++)
@@ -603,5 +603,5 @@ for(k=0;k<5;k++)
           printf("%.1lf\n", (double)ranking[c][d]);
   }
 
-  if (getch()) return;
+  if (getch()) return; //t를 눌렀을 때 다시 게임 화면으로 돌아가도록
 }
