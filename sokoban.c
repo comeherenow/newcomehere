@@ -1,4 +1,4 @@
-﻿#include <stdio.h>
+#include <stdio.h>
 #include <termio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -24,6 +24,9 @@ void load_stage();
 void print_load();
 void how_long_you_play();
 void show_me_display();
+void check_time();
+
+int undocount=0; //undo횟수
 
 char name[11];  // 이름 입력받는 배열
 
@@ -48,8 +51,11 @@ char boxforsave[5][30][30];
 int playerx,playery;  // 창고지기 위치 저장 변수
 char input_char;  // 옵션키 입력받는 변수
 
-char mvsave[5][30][30];
-char base[5][30][30];
+char mvsave[5][30][30]; //undo 하기전 움직임 저장
+
+char base_map[5][30][30]; //초기 맵상태 저장
+char base_box[5][30][30];
+char base_house[5][30][30];
 
 double gap=0, exitgap=0; // 시간 측정 변수
 
@@ -66,6 +72,7 @@ float times[5][eachrank[size]+1];
 
   start();
   stage();
+  save(1);
 
   if (box_num[stage_num][0]!=house_num[stage_num][0]){
     printf("맵 오류 : 박스 개수와 보관장소 개수 불일치\n프로그램을 종료합니다.");
@@ -78,6 +85,7 @@ float times[5][eachrank[size]+1];
   while(1)
   {
     input_char=getch();
+
     if(input_char == 'h'||input_char == 'j'||input_char == 'k'||input_char == 'l'){
       movesave();
       move();
@@ -85,7 +93,6 @@ float times[5][eachrank[size]+1];
         break;
 
     }
-    else{
     if(input_char == 's'){
       save_stage(stage_num);
       printf("저장완료");
@@ -96,12 +103,17 @@ float times[5][eachrank[size]+1];
       endgame=clock();
       how_long_you_play();
       save_stage(stage_num);
+      system("clear");
+      printf("\n");
+      printf("S E E    Y O U    %s\n",name );
+      printf("\n");
       printf("%c\n", input_char);
+      printf("\n");
       return 0;
     }
     if(input_char == 'f'){
-      system("clear");
       load_stage();
+      system("clear");
       print_load();
       continue;
     }
@@ -129,7 +141,12 @@ float times[5][eachrank[size]+1];
       print_stage(stage_num);
       continue;
     }
-  }
+    if(input_char == 't'){
+      check_time();
+      printf("%c\n", input_char);
+      print_stage(stage_num);
+      continue;
+    }
   }
 
   size++;
@@ -143,16 +160,16 @@ void start(){
   scanf("%s",name);
 
   if(strlen(name)>10){
-    printf("10자 이상 입력할 수 업습니다.\n");
+    printf("10자 이상 입력할 수 없습니다.\n"); //stelen함수를 활용하여 이름이 10자가 넘으면 10자 이상 입력 불가하다고 출력
     exit(1);
   }
   else {
     while (name[i]!='\0'){
-      if((('a'<=name[i])&&(name[i]<='z'))||(('A'<=name[i])&&(name[i]<='Z')));
+      if((('a'<=name[i])&&(name[i]<='z'))||(('A'<=name[i])&&(name[i]<='Z'))); //이름이 영어면 그대로 출력하고 아니면 영어만 입력해야한다고 출력
 
       else {
-        printf("한글은 입력할 수 없습니다.\n");
-        exit(1) ;
+        printf("영어만 입력하세요.\n");
+        exit(1);
       }
     i++;
    }
@@ -202,7 +219,7 @@ void stage(){
 /*****************맵출력(print_stage)******************/
 
 void print_stage(int stage_num){
-  int i=0;
+  system("clear");
   system("clear");
   printf("Hello %s", name);
 
@@ -315,7 +332,7 @@ void movesave()
             for(int a=3; a>=0; a--){
                 for(int b=0; b<30; b++){
                     for(int c=0; c<30; c++){
-                        mvsave[a+1][b][c]=mvsave[a][b][c];
+                        mvsave[a+1][b][c]=mvsave[a][b][c]; //undo를 사용하기위해 움직임저장
                     }
                 }
             }
@@ -329,18 +346,12 @@ void movesave()
 /********************undo*************************/
 void undo()
 {
-    int undocount=0;
-    int i=0;
-
     if(undocount <5)
     {
-    system("clear");
+        system("clear");
+        printf("Hello %s", name);
 
-  printf("Hello ");
-  while(i<=10&&name[i]!=EOF){
-  printf("%c", name[i]);
-  i++;}
-  printf("\n\n"); //HELLO NAME 출력
+        printf("\n\n"); //HELLO NAME 출력
 
   for(int a=0;a<30;a++){
     for(int b=0;b<30;b++){
@@ -351,7 +362,7 @@ void undo()
 
     for(int a=0; a<30; a++){
         for(int b=0; b<30; b++){
-            map[stage_num][a][b]=mvsave[0][a][b];
+            map[stage_num][a][b]=mvsave[0][a][b]; //undo누르기 전으로 맵을 초기화
         }
     }
 
@@ -360,7 +371,7 @@ void undo()
     for(int a=0; a<4; a++){
         for(int b=0; b<30; b++){
             for(int c=0; c<30; c++){
-                mvsave[a][b][c]=mvsave[a+1][b][c];
+                mvsave[a][b][c]=mvsave[a+1][b][c]; //undo를 사용하고 배열을 한칸씩 옮긴다
             }
         }
     }
@@ -377,7 +388,7 @@ void clean(int num)
     for(int a=0; a<5; a++){
         for(int b=0; b<30; b++){
             for(int c=0; c<30; c++){
-                mvsave[a][b][c]='\0';
+                mvsave[a][b][c]='\0'; //배열에 움직임을 저장하기 위해 초기화
             }
         }
     }
@@ -386,11 +397,12 @@ void clean(int num)
     case 2:
     for(int a=0; a<5; a++){
         for(int b=0; b<30; b++){
-            for(int c=0; c<30; c++){
+            for(int c=0; c<30; c++){ //맵 배열에 새로 불러오기 위해 초기화
                 mvsave[a][b][c]='\0';
                 map[a][b][c]='\0';
                 box[a][b][c]='\0';
                 house[a][b][c]='\0';
+                undocount=0;
             }
         }
     }
@@ -398,7 +410,7 @@ void clean(int num)
 
 }
 }
-/*******************save**************************/
+/*******************초기 맵상태저장(save)**************************/
 void save(int num)
 {
     switch (num) {
@@ -407,7 +419,9 @@ void save(int num)
     for(int a=0; a<5; a++){
         for(int b=0; b<30; b++){
             for(int c=0; c<30; c++){
-                base[a][b][c]=map[a][b][c];
+                base_map[a][b][c]=map[a][b][c]; //맵을 다시시작할때 초기맵 저장
+                base_box[a][b][c]=box[a][b][c];
+                base_house[a][b][c]=house[a][b][c];
             }
         }
     }
@@ -416,47 +430,49 @@ void save(int num)
     for(int a=0; a<5; a++){
         for(int b=0; b<30; b++){
             for(int c=0; c<30; c++){
-                map[a][b][c]=base[a][b][c];
+                map[a][b][c]=base_map[a][b][c]; //다시하기시 초기맵상태를 불러옴
+                house[a][b][c]=base_house[a][b][c];
+                box[a][b][c]=base_box[a][b][c];
             }
         }
     }
 }
 }
 
-/****************세이브*******************/
+/****************현재 맵상태저장(save_stage)******************/
 
-void save_stage(int stage_num)
+void save_stage(int stage_num) // 현재 맵 상태를 sokoban.txt에 저장
 {
   int a, b;
-
   FILE *save;
 
-  save=fopen("sokoban.txt","w");
+  save=fopen("sokoban.txt","wt");
 
   for (a=0; a<30; a++)
   {
-    fprintf(save,"\n");
     for (b=0; b<30; b++)
     {
       fprintf(save,"%c",map[stage_num][a][b]);
     }
+    fprintf(save,"\n");
   }
 
-  fclose(save);
+  fclose(save); // 메모리 낭비를 방지하기위해 파일을 닫아줌
 }
 
 /***************맵 불러오기*******************/
-void load_stage()
+void load_stage() // sokoban.txt파일에 담긴 내용을 "r(read)"모드로 열어 읽음
 {
   int x = 0, y = 0;
   char ch;
+  house[stage_num][y][x]=0;
+  house_num[stage_num][0]=0;
 
   FILE *load;
 
   load = fopen("sokoban.txt","r");
   while(fscanf(load,"%c",&ch) != EOF)
   {
-
     if (ch=='\n')
     {
       y++;
@@ -475,23 +491,18 @@ void load_stage()
       box[stage_num][y][x]=ch;
       box_num[stage_num][0]++;
     }
-    if(ch=='@')
-    {
-      playerx=x;
-      playery=y;
-      continue;
-    }
-
 
     map[stage_num][y][x] = ch;
     x++;
   }
+  whereisplayer();
   fclose(load);
 }
 
 /****************로드 맵 그리기***************/
-void print_load(int stage_num)
+void print_load(int stage_num) // load_stage 함수에서 읽어온 정보를 그림
 {
+  printf("Hello %s\n\n",name);
   for(int a=0;a<30;a++){
     for(int b=0;b<30;b++){
       printf("%c",map[stage_num][a][b]);
@@ -500,6 +511,7 @@ void print_load(int stage_num)
   }
 }
 
+/******************입력(getch)********************/
 int getch(void){
   char ch;
   struct termios buf;
@@ -517,8 +529,9 @@ int getch(void){
 /***************시간 측정하기***************/
 void how_long_you_play()
 {
-  gap=((float)(endgame-startgame)-(float)(stopend-stop))/CLK_TCK;
+  gap=((float)(endgame-startgame)-(float)(stopend-stop))/CLK_TCK;  //게임이 시작하는 시간과 끝나는 시간을 측정해서 차이 1000으로 나누고 저장함
 }
+
 /*****************디스플레이****************/
 void show_me_display()
 {
@@ -537,5 +550,63 @@ void show_me_display()
 
   if (getch()) return;
 
+}
+/***************파일 열어서 top옵션(랭킹) 불러오기********************/
+void check_time()
+{
+ system("clear");
+  char ch[11];
+  double ranking[5][5]={};
+  int num_map;
+  double sec;
+  double tmp=0;
+  FILE *fp;
+  fp=fopen("ranking.txt","w+t");
+  while(fscanf(fp,"%s", &ch)!=EOF)
+  {
+      if(ch[0]=='m'&&ch[1]=='a'&&ch[2]=='p') //랭킹 파일을 열어서 map이 나오면 숫자1,2,3,4,5 알려줌
+      num_map=ch[3]-49;
 
+      if(ch[4]=='s'&&ch[5]=='e'&&ch[6]=='c'){ //sec앞에 있는 시간을 뽑아내서 출력하기 위해
+          sec=ch[0]*10 + ch[1]*1 + ch[3]*0.1 - 532.8;//시간을 sec에 저장
+          for(int a=0; a<5; a++){
+              if(ranking[num_map][a]=='\0'){
+              ranking[num_map][a]=sec;
+              break;
+          }
+
+          }
+      }
+
+      for(int b=0; b<11; b++)
+      ch[b]='\0';
+  }
+
+//버블 정렬해서 게임 순위 나타냄
+ranking[5][5]=0;//k=n l=i y=j i=h j=k
+int i,j,k,l,y;
+for(k=0;k<5;k++)
+  for(l=0; l<5; l++){
+      y=l;
+      for(i=k; i<5; i++){
+          for (j=y;j<5;j++)
+          if(ranking[k][l]>ranking[i][j]){
+              tmp=ranking[k][l];
+              ranking[k][l]=ranking[i][j];
+              ranking[i][j]=tmp;
+             }
+             y=0;
+          }
+      }
+
+
+
+
+  for(int c=0; c<5; c++){
+      printf("map%d\n", c+1);
+      for(int d=0; d<5; d++)
+          printf("%.1lf\n", (double)ranking[c][d]);
+  }
+
+  if (getch()) return; //t를 눌렀을 때 다시 게임 화면으로 돌아가도록
 }
