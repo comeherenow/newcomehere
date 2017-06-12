@@ -530,7 +530,6 @@ void show_me_display()
   printf("f(file load)\n");
   printf("d(display help)\n");
   printf("t(top)\n");
-  1
 
   if (getch()) return;
 
