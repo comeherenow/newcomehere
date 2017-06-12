@@ -160,7 +160,7 @@ void start(){
   scanf("%s",name);
 
   if(strlen(name)>10){
-    printf("10자 이상 입력할 수 업습니다.\n");
+    printf("10자 이상 입력할 수 없습니다.\n");
     exit(1);
   }
   else {
@@ -168,7 +168,7 @@ void start(){
       if((('a'<=name[i])&&(name[i]<='z'))||(('A'<=name[i])&&(name[i]<='Z')));
 
       else {
-        printf("한글은 입력할 수 없습니다.\n");
+        printf("영어만 입력하세요.\n");
         exit(1);
       }
     i++;
