@@ -456,7 +456,6 @@ void save_stage(int stage_num) // 현재 맵 상태를 sokoban.txt에 저장
     }
     fprintf(save,"\n");
   }
-
   fclose(save); // 메모리 낭비를 방지하기위해 파일을 닫아줌
 }
 
