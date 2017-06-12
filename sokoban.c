@@ -313,7 +313,7 @@ int nstage_check(){
 
 /*****************movesave*****************************/
 
-void movesave()
+void movesave()  //undo를 위한 배열 저장
 {
             for(int a=3; a>=0; a--){
                 for(int b=0; b<30; b++){
@@ -348,7 +348,7 @@ void undo()
 
     for(int a=0; a<30; a++){
         for(int b=0; b<30; b++){
-            map[stage_num][a][b]=mvsave[0][a][b];
+            map[stage_num][a][b]=mvsave[0][a][b]; //현재 맵을 undo사용 전으로 바꿈
         }
     }
 
@@ -357,16 +357,17 @@ void undo()
     for(int a=0; a<4; a++){
         for(int b=0; b<30; b++){
             for(int c=0; c<30; c++){
-                mvsave[a][b][c]=mvsave[a+1][b][c];
+                mvsave[a][b][c]=mvsave[a+1][b][c]; //undo사용하고 배열 한칸씩 옮기기
             }
         }
     }
 undocount++;
+printf("%d", undocount);
 }
 }
 
 /********************배열초기화***********************/
-void clean(int num)
+void clean(int num) //맵을 새로 시작할때 배열 초기화
 {
     switch(num){
 
@@ -374,7 +375,7 @@ void clean(int num)
     for(int a=0; a<5; a++){
         for(int b=0; b<30; b++){
             for(int c=0; c<30; c++){
-                mvsave[a][b][c]='\0';
+                mvsave[a][b][c]='\0'; //배열에 새롭게 저장하기 위해 배열 초기화
             }
         }
     }
@@ -388,7 +389,7 @@ void clean(int num)
                 map[a][b][c]='\0';
                 box[a][b][c]='\0';
                 house[a][b][c]='\0';
-                undocount=0;
+                undocount=0; //처음부터 맵을 쓰기위해 배열 초기화
             }
         }
     }
@@ -407,7 +408,7 @@ void save(int num)
             for(int c=0; c<30; c++){
                 base_map[a][b][c]=map[a][b][c];
                 base_box[a][b][c]=box[a][b][c];
-                base_house[a][b][c]=house[a][b][c];
+                base_house[a][b][c]=house[a][b][c]; //초기 맵상태를 저장
             }
         }
     }
@@ -418,7 +419,7 @@ void save(int num)
             for(int c=0; c<30; c++){
                 map[a][b][c]=base_map[a][b][c];
                 house[a][b][c]=base_house[a][b][c];
-                box[a][b][c]=base_box[a][b][c];
+                box[a][b][c]=base_box[a][b][c]; //초기 맵상태를 불러옴
             }
         }
     }
@@ -529,6 +530,7 @@ void show_me_display()
   printf("f(file load)\n");
   printf("d(display help)\n");
   printf("t(top)\n");
+  1
 
   if (getch()) return;
 
