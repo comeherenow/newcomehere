@@ -439,7 +439,7 @@ void save(int num)
 
 /****************현재 맵상태저장(save_stage)******************/
 
-void save_stage(int stage_num)
+void save_stage(int stage_num) // 현재 맵 상태를 sokoban.txt에 저장
 {
   int a, b;
   FILE *save;
@@ -455,11 +455,11 @@ void save_stage(int stage_num)
     }
   }
 
-  fclose(save);
+  fclose(save); // 메모리 낭비를 방지하기위해 파일을 닫아줌
 }
 
 /***************맵 불러오기*******************/
-void load_stage()
+void load_stage() // sokoban.txt파일에 담긴 내용을 "r(read)"모드로 열어 읽음
 {
   int x = 0, y = 0;
   char ch;
@@ -496,7 +496,7 @@ void load_stage()
 }
 
 /****************로드 맵 그리기***************/
-void print_load(int stage_num)
+void print_load(int stage_num) // load_stage 함수에서 읽어온 정보를 그림
 {
   for(int a=0;a<30;a++){
     for(int b=0;b<30;b++){
@@ -526,6 +526,7 @@ void how_long_you_play()
 {
   gap=((float)(endgame-startgame)-(float)(stopend-stop))/CLK_TCK;
 }
+
 /*****************디스플레이****************/
 void show_me_display()
 {
@@ -543,7 +544,6 @@ void show_me_display()
   printf("t(top)\n");
 
   if (getch()) return;
-
 
 }
 /***************파일 열어서 top옵션(랭킹) 불러오기********************/
