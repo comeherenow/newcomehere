@@ -24,9 +24,15 @@ void load_stage();
 void print_load();
 void how_long_you_play();
 void show_me_display();
+void check_time();
 
 int undocount=0; //undo횟수
 
+<<<<<<< HEAD
+=======
+int undocount=0; //undo횟수
+
+>>>>>>> 070acf7923625a77a9b37dc990f3f08fce466e12
 char name[11];  // 이름 입력받는 배열
 
 int stage_num = -1;  // 맵 고유번호
@@ -102,7 +108,12 @@ float times[5][eachrank[size]+1];
       endgame=clock();
       how_long_you_play();
       save_stage(stage_num);
+      system("clear");
+      printf("\n");
+      printf("S E E    Y O U    %s\n",name );
+      printf("\n");
       printf("\n(Command)  %c\n", input_char);
+      printf("\n");
       return 0;
     }
     if(input_char == 'f'){
@@ -132,6 +143,12 @@ float times[5][eachrank[size]+1];
     if(input_char == 'd'){
       printf("\n(Command)  %c\n", input_char);
       show_me_display();
+      print_stage(stage_num);
+      continue;
+    }
+    if(input_char == 't'){
+      check_time();
+      printf("\n(Command)  %c\n", input_char);
       print_stage(stage_num);
       continue;
     }
@@ -313,7 +330,7 @@ int nstage_check(){
 
 /*****************movesave*****************************/
 
-void movesave()  //undo를 위한 배열 저장
+void movesave()
 {
             for(int a=3; a>=0; a--){
                 for(int b=0; b<30; b++){
@@ -348,7 +365,7 @@ void undo()
 
     for(int a=0; a<30; a++){
         for(int b=0; b<30; b++){
-            map[stage_num][a][b]=mvsave[0][a][b]; //현재 맵을 undo사용 전으로 바꿈
+            map[stage_num][a][b]=mvsave[0][a][b];
         }
     }
 
@@ -357,17 +374,16 @@ void undo()
     for(int a=0; a<4; a++){
         for(int b=0; b<30; b++){
             for(int c=0; c<30; c++){
-                mvsave[a][b][c]=mvsave[a+1][b][c]; //undo사용하고 배열 한칸씩 옮기기
+                mvsave[a][b][c]=mvsave[a+1][b][c];
             }
         }
     }
 undocount++;
-printf("%d", undocount);
 }
 }
 
 /********************배열초기화***********************/
-void clean(int num) //맵을 새로 시작할때 배열 초기화
+void clean(int num)
 {
     switch(num){
 
@@ -375,7 +391,7 @@ void clean(int num) //맵을 새로 시작할때 배열 초기화
     for(int a=0; a<5; a++){
         for(int b=0; b<30; b++){
             for(int c=0; c<30; c++){
-                mvsave[a][b][c]='\0'; //배열에 새롭게 저장하기 위해 배열 초기화
+                mvsave[a][b][c]='\0';
             }
         }
     }
@@ -389,7 +405,7 @@ void clean(int num) //맵을 새로 시작할때 배열 초기화
                 map[a][b][c]='\0';
                 box[a][b][c]='\0';
                 house[a][b][c]='\0';
-                undocount=0; //처음부터 맵을 쓰기위해 배열 초기화
+                undocount=0;
             }
         }
     }
@@ -408,7 +424,7 @@ void save(int num)
             for(int c=0; c<30; c++){
                 base_map[a][b][c]=map[a][b][c];
                 base_box[a][b][c]=box[a][b][c];
-                base_house[a][b][c]=house[a][b][c]; //초기 맵상태를 저장
+                base_house[a][b][c]=house[a][b][c];
             }
         }
     }
@@ -419,7 +435,7 @@ void save(int num)
             for(int c=0; c<30; c++){
                 map[a][b][c]=base_map[a][b][c];
                 house[a][b][c]=base_house[a][b][c];
-                box[a][b][c]=base_box[a][b][c]; //초기 맵상태를 불러옴
+                box[a][b][c]=base_box[a][b][c];
             }
         }
     }
@@ -534,4 +550,63 @@ void show_me_display()
   if (getch()) return;
 
 
+}
+/***************파일 열어서 top옵션(랭킹) 불러오기********************/
+void check_time()
+{
+ system("clear");
+  char ch[11];
+  double ranking[5][5]={};
+  int num_map;
+  double sec;
+  double tmp=0;
+  FILE *fp;
+  fp=fopen("ranking.txt","w+t");
+  while(fscanf(fp,"%s", &ch)!=EOF)
+  {
+      if(ch[0]=='m'&&ch[1]=='a'&&ch[2]=='p')
+      num_map=ch[3]-49;
+
+      if(ch[4]=='s'&&ch[5]=='e'&&ch[6]=='c'){
+          sec=ch[0]*10 + ch[1]*1 + ch[3]*0.1 - 532.8;
+          for(int a=0; a<5; a++){
+              if(ranking[num_map][a]=='\0'){
+              ranking[num_map][a]=sec;
+              break;
+          }
+
+          }
+      }
+
+      for(int b=0; b<11; b++)
+      ch[b]='\0';
+  }
+
+//버블 정렬
+ranking[5][5]=0;//k=n l=i y=j i=h j=k
+int i,j,k,l,y;
+for(k=0;k<5;k++)
+  for(l=0; l<5; l++){
+      y=l;
+      for(i=k; i<5; i++){
+          for (j=y;j<5;j++)
+          if(ranking[k][l]>ranking[i][j]){
+              tmp=ranking[k][l];
+              ranking[k][l]=ranking[i][j];
+              ranking[i][j]=tmp;
+             }
+             y=0;
+          }
+      }
+
+
+
+
+  for(int c=0; c<5; c++){
+      printf("map%d\n", c+1);
+      for(int d=0; d<5; d++)
+          printf("%.1lf\n", (double)ranking[c][d]);
+  }
+
+  if (getch()) return;
 }
