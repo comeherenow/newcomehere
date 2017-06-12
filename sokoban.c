@@ -330,7 +330,7 @@ void movesave()
             for(int a=3; a>=0; a--){
                 for(int b=0; b<30; b++){
                     for(int c=0; c<30; c++){
-                        mvsave[a+1][b][c]=mvsave[a][b][c];
+                        mvsave[a+1][b][c]=mvsave[a][b][c]; //undo를 사용하기위해 움직임저장
                     }
                 }
             }
@@ -360,7 +360,7 @@ void undo()
 
     for(int a=0; a<30; a++){
         for(int b=0; b<30; b++){
-            map[stage_num][a][b]=mvsave[0][a][b];
+            map[stage_num][a][b]=mvsave[0][a][b]; //undo누르기 전으로 맵을 초기화
         }
     }
 
@@ -369,7 +369,7 @@ void undo()
     for(int a=0; a<4; a++){
         for(int b=0; b<30; b++){
             for(int c=0; c<30; c++){
-                mvsave[a][b][c]=mvsave[a+1][b][c];
+                mvsave[a][b][c]=mvsave[a+1][b][c]; //undo를 사용하고 배열을 한칸씩 옮긴다
             }
         }
     }
@@ -386,7 +386,7 @@ void clean(int num)
     for(int a=0; a<5; a++){
         for(int b=0; b<30; b++){
             for(int c=0; c<30; c++){
-                mvsave[a][b][c]='\0';
+                mvsave[a][b][c]='\0'; //배열에 움직임을 저장하기 위해 초기화
             }
         }
     }
@@ -395,7 +395,7 @@ void clean(int num)
     case 2:
     for(int a=0; a<5; a++){
         for(int b=0; b<30; b++){
-            for(int c=0; c<30; c++){
+            for(int c=0; c<30; c++){ //맵 배열에 새로 불러오기 위해 초기화
                 mvsave[a][b][c]='\0';
                 map[a][b][c]='\0';
                 box[a][b][c]='\0';
@@ -417,7 +417,7 @@ void save(int num)
     for(int a=0; a<5; a++){
         for(int b=0; b<30; b++){
             for(int c=0; c<30; c++){
-                base_map[a][b][c]=map[a][b][c];
+                base_map[a][b][c]=map[a][b][c]; //맵을 다시시작할때 초기맵 저장
                 base_box[a][b][c]=box[a][b][c];
                 base_house[a][b][c]=house[a][b][c];
             }
@@ -428,7 +428,7 @@ void save(int num)
     for(int a=0; a<5; a++){
         for(int b=0; b<30; b++){
             for(int c=0; c<30; c++){
-                map[a][b][c]=base_map[a][b][c];
+                map[a][b][c]=base_map[a][b][c]; //다시하기시 초기맵상태를 불러옴
                 house[a][b][c]=base_house[a][b][c];
                 box[a][b][c]=base_box[a][b][c];
             }
