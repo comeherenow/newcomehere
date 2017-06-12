@@ -28,11 +28,6 @@ void check_time();
 
 int undocount=0; //undo횟수
 
-<<<<<<< HEAD
-=======
-int undocount=0; //undo횟수
-
->>>>>>> 070acf7923625a77a9b37dc990f3f08fce466e12
 char name[11];  // 이름 입력받는 배열
 
 int stage_num = -1;  // 맵 고유번호
