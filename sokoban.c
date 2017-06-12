@@ -85,17 +85,18 @@ float times[5][eachrank[size]+1];
         break;
 
     }
+    else{
     if(input_char == 's'){
       save_stage(stage_num);
       printf("저장완료");
-      printf("\n(Command)  %c\n", input_char);
+      printf("%c\n", input_char);
       continue;
     }
     if(input_char == 'e'){
       endgame=clock();
       how_long_you_play();
       save_stage(stage_num);
-      printf("\n(Command)  %c\n", input_char);
+      printf("%c\n", input_char);
       return 0;
     }
     if(input_char == 'f'){
@@ -105,29 +106,30 @@ float times[5][eachrank[size]+1];
       continue;
     }
     if(input_char == 'u'){
-      printf("\n(Command)  %c\n", input_char);
+      printf("%c\n", input_char);
       undo();
     }
     if(input_char == 'n'){
-        printf("\n(Command)  %c\n", input_char);
+        printf("%c\n", input_char);
         clean(2);
         save(2);
         whereisplayer();
         print_stage(stage_num=0);
     }
     if(input_char == 'r'){
-        printf("\n(Command)  %c\n", input_char);
+        printf("%c\n", input_char);
         clean(2);
         save(2);
         whereisplayer();
         print_stage(stage_num);
     }
     if(input_char == 'd'){
-      printf("\n(Command)  %c\n", input_char);
+      printf("%c\n", input_char);
       show_me_display();
       print_stage(stage_num);
       continue;
     }
+  }
   }
 
   size++;
@@ -147,7 +149,7 @@ void start(){
   else {
     while (name[i]!='\0'){
       if((('a'<=name[i])&&(name[i]<='z'))||(('A'<=name[i])&&(name[i]<='Z')));
-      }
+
       else {
         printf("한글은 입력할 수 없습니다.\n");
         exit(1) ;
@@ -213,6 +215,7 @@ void print_stage(int stage_num){
     }
     printf("\n");
   }
+  printf("(command) ");
 }
 
 /***************whereisplayer*************************/
@@ -425,19 +428,20 @@ void save(int num)
 void save_stage(int stage_num)
 {
   int a, b;
+
   FILE *save;
 
   save=fopen("sokoban.txt","w");
-  
+
   for (a=0; a<30; a++)
   {
-    fprintf(save,"%c","\n");
+    fprintf(save,"\n");
     for (b=0; b<30; b++)
     {
-      fprintf(save,"%c",map[stage_num][b][a]);
+      fprintf(save,"%c",map[stage_num][a][b]);
     }
   }
-  
+
   fclose(save);
 }
 
@@ -471,11 +475,17 @@ void load_stage()
       box[stage_num][y][x]=ch;
       box_num[stage_num][0]++;
     }
+    if(ch=='@')
+    {
+      playerx=x;
+      playery=y;
+      continue;
+    }
+
 
     map[stage_num][y][x] = ch;
     x++;
   }
-
   fclose(load);
 }
 
@@ -484,7 +494,7 @@ void print_load(int stage_num)
 {
   for(int a=0;a<30;a++){
     for(int b=0;b<30;b++){
-      printf("%c",map[stage_num][b][a]);
+      printf("%c",map[stage_num][a][b]);
     }
     printf("\n");
   }
