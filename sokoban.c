@@ -160,12 +160,12 @@ void start(){
   scanf("%s",name);
 
   if(strlen(name)>10){
-    printf("10자 이상 입력할 수 없습니다.\n");
+    printf("10자 이상 입력할 수 없습니다.\n"); //stelen함수를 활용하여 이름이 10자가 넘으면 10자 이상 입력 불가하다고 출력
     exit(1);
   }
   else {
     while (name[i]!='\0'){
-      if((('a'<=name[i])&&(name[i]<='z'))||(('A'<=name[i])&&(name[i]<='Z')));
+      if((('a'<=name[i])&&(name[i]<='z'))||(('A'<=name[i])&&(name[i]<='Z'))); //이름이 영어면 그대로 출력하고 아니면 영어만 입력해야한다고 출력
 
       else {
         printf("영어만 입력하세요.\n");
@@ -524,7 +524,7 @@ int getch(void){
 /***************시간 측정하기***************/
 void how_long_you_play()
 {
-  gap=((float)(endgame-startgame)-(float)(stopend-stop))/CLK_TCK;
+  gap=((float)(endgame-startgame)-(float)(stopend-stop))/CLK_TCK;  //게임이 시작하는 시간과 끝나는 시간을 측정해서 차이 1000으로 나누고 저장함
 }
 
 /*****************디스플레이****************/
