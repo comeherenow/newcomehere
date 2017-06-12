@@ -96,7 +96,7 @@ float times[5][eachrank[size]+1];
     if(input_char == 's'){
       save_stage(stage_num);
       printf("저장완료");
-      printf("\n(Command)  %c\n", input_char);
+      printf("%c\n", input_char);
       continue;
     }
     if(input_char == 'e'){
@@ -107,43 +107,43 @@ float times[5][eachrank[size]+1];
       printf("\n");
       printf("S E E    Y O U    %s\n",name );
       printf("\n");
-      printf("\n(Command)  %c\n", input_char);
+      printf("%c\n", input_char);
       printf("\n");
       return 0;
     }
     if(input_char == 'f'){
-      system("clear");
       load_stage();
+      system("clear");
       print_load();
       continue;
     }
     if(input_char == 'u'){
-      printf("\n(Command)  %c\n", input_char);
+      printf("%c\n", input_char);
       undo();
     }
     if(input_char == 'n'){
-        printf("\n(Command)  %c\n", input_char);
+        printf("%c\n", input_char);
         clean(2);
         save(2);
         whereisplayer();
         print_stage(stage_num=0);
     }
     if(input_char == 'r'){
-        printf("\n(Command)  %c\n", input_char);
+        printf("%c\n", input_char);
         clean(2);
         save(2);
         whereisplayer();
         print_stage(stage_num);
     }
     if(input_char == 'd'){
-      printf("\n(Command)  %c\n", input_char);
+      printf("%c\n", input_char);
       show_me_display();
       print_stage(stage_num);
       continue;
     }
     if(input_char == 't'){
       check_time();
-      printf("\n(Command)  %c\n", input_char);
+      printf("%c\n", input_char);
       print_stage(stage_num);
       continue;
     }
@@ -220,6 +220,7 @@ void stage(){
 
 void print_stage(int stage_num){
   system("clear");
+  system("clear");
   printf("Hello %s", name);
 
   printf("\n\n"); //HELLO NAME 출력
@@ -231,6 +232,7 @@ void print_stage(int stage_num){
     }
     printf("\n");
   }
+  printf("(command) ");
 }
 
 /***************whereisplayer*************************/
@@ -448,13 +450,12 @@ void save_stage(int stage_num) // 현재 맵 상태를 sokoban.txt에 저장
 
   for (a=0; a<30; a++)
   {
-    fprintf(save,"\n");
     for (b=0; b<30; b++)
     {
       fprintf(save,"%c",map[stage_num][a][b]);
     }
+    fprintf(save,"\n");
   }
-
   fclose(save); // 메모리 낭비를 방지하기위해 파일을 닫아줌
 }
 
@@ -463,6 +464,8 @@ void load_stage() // sokoban.txt파일에 담긴 내용을 "r(read)"모드로 �
 {
   int x = 0, y = 0;
   char ch;
+  house[stage_num][y][x]=0;
+  house_num[stage_num][0]=0;
 
   FILE *load;
 
@@ -491,16 +494,17 @@ void load_stage() // sokoban.txt파일에 담긴 내용을 "r(read)"모드로 �
     map[stage_num][y][x] = ch;
     x++;
   }
-
+  whereisplayer();
   fclose(load);
 }
 
 /****************로드 맵 그리기***************/
 void print_load(int stage_num) // load_stage 함수에서 읽어온 정보를 그림
 {
+  printf("Hello %s\n\n",name);
   for(int a=0;a<30;a++){
     for(int b=0;b<30;b++){
-      printf("%c",map[stage_num][b][a]);
+      printf("%c",map[stage_num][a][b]);
     }
     printf("\n");
   }
