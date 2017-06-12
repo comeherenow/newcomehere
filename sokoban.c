@@ -606,6 +606,7 @@ for(k=0;k<5;k++)
       for(int d=0; d<5; d++)
           printf("%.1lf\n", (double)ranking[c][d]);
   }
-
+  fprintf(fp,"%.1lf\n",ranking);
+fclose(fp);
   if (getch()) return; //t를 눌렀을 때 다시 게임 화면으로 돌아가도록
 }
